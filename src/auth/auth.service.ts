@@ -16,17 +16,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(payload: JwtPayload): Promise<any> {
-    const { username } = payload;
-    const user = await this.userService.findOneByOption({ username });
-    if (!user) {
-      throw new ErrorException('No user');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...result } = user;
-    return result;
-  }
-
   validatePassword(user: User, password: string): boolean {
     return bcrypt.compareSync(password, user.password);
   }
@@ -51,6 +40,7 @@ export class AuthService {
     return {
       expiresIn: TOKEN_EXPIRES_IN,
       accessToken,
+      userId: user.id,
     };
   }
 }

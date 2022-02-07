@@ -8,4 +8,7 @@ export class UpdateUserDto {
 
   @ApiProperty()
   readonly password: string;
+
+  @ApiProperty()
+  readonly balance: number;
 }

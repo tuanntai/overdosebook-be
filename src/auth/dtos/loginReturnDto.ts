@@ -5,4 +5,7 @@ export class LoginReturnDto {
 
   @ApiProperty()
   expiresIn: string;
+
+  @ApiProperty()
+  userId: number;
 }
