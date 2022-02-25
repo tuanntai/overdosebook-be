@@ -32,7 +32,8 @@ export class BookService {
   ) {}
 
   async create(createBookDto: CreateBookDto) {
-    await this.bookRepository.save(createBookDto);
+    const timeAdded = new Date();
+    await this.bookRepository.save({ ...createBookDto, timeAdded: timeAdded });
     return 'Successfully !';
   }
 

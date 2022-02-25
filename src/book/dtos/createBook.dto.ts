@@ -24,6 +24,7 @@ export class CreateBookDto {
   @ApiProperty()
   readonly amount: number;
 
+
   @ApiProperty()
   readonly discountPercent: number;
 }

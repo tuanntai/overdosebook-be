@@ -9,13 +9,10 @@ export class Book {
   author: string;
 
   @Column('text')
-  publisher: string;
+  owner: string;
 
   @Column('text')
   title: string;
-
-  @Column('text')
-  excerpt: string;
 
   @Column('text')
   description: string;
@@ -27,8 +24,5 @@ export class Book {
   price: number;
 
   @Column()
-  amount: number;
-
-  @Column({ nullable: true })
-  discountPercent: number;
+  timeAdded: Date;
 }

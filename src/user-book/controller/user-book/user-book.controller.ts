@@ -12,4 +12,9 @@ export class UserBookController {
   findBookByUserId(@Param('userId') userId: number) {
     return this.userBookService.findBookByUserId(userId);
   }
+
+  @Get('/recentlyBuyBook')
+  recentlyBuyBook() {
+    return this.userBookService.recentlyBuyBook();
+  }
 }

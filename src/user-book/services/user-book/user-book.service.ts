@@ -21,8 +21,20 @@ export class UserBookService {
 
   async findBookByUserId(userId: number) {
     const listUserBook = await this.findAll();
-    
     const ownerBook = listUserBook.filter((item) => item.userId == userId);
     return ownerBook;
+  }
+
+  async recentlyBuyBook() {
+    const listUserBook = (await this.findAll()).reverse();
+    console.log(listUserBook);
+    let recentlyBook = [];
+    for (let i = 0; i < listUserBook.length - 1; i++) {
+      if (listUserBook[i].bookId !== listUserBook[i + 1].bookId) {
+        recentlyBook.push(listUserBook[i]);
+      }
+    }
+
+    return recentlyBook.slice(0, 5);
   }
 }

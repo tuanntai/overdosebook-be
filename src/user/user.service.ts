@@ -1,4 +1,4 @@
-import { Injectable, Res } from '@nestjs/common';
+import { Injectable, Req, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import { OwnerBook, User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { AddFundDto } from './dto/addFund.dto';
+import { Jwt } from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
@@ -55,5 +56,16 @@ export class UserService {
 
   async remove(id: number) {
     return await this.userRepository.delete(id);
+  }
+
+  async verifyToken(@Req() req, @Res() res) {
+    const token = req.Body.token || req.headers['x-access-token'];
+    if (!token) {
+      return res.status(403).send('A token is required for authentication');
+    }
+    try {
+    } catch (err) {
+      return res.status(401).send('Invalid Token');
+    }
   }
 }
