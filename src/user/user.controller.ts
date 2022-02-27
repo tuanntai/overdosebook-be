@@ -13,10 +13,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserService } from './user.service';
-import { AddFundDto } from './dto/addFund.dto';
+import { AddFundDto, CreateUserDto, UpdateUserDto } from './interface';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -29,16 +27,14 @@ export class UserController {
     return this.userService.create(createUserDto, res);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('/getAll')
   findAll() {
     return this.userService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    return await this.userService.findOne(id);
   }
   @UseGuards(JwtAuthGuard)
   @Post('/addFund')
@@ -55,9 +51,9 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch()
+  update(@Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(updateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -16,13 +16,11 @@ export class S3Service {
     try {
       this.upload(req, res, function (error) {
         if (error) {
-          console.log(error);
           return res.status(404).json(`Failed to upload image file: ${error}`);
         }
         return res.status(201).json(process.env.S3_URL + req.files[0].key);
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json(`Failed to upload image file: ${error}`);
     }
   }
@@ -31,7 +29,6 @@ export class S3Service {
       const stream = this.getFileStream(key);
       stream.pipe(res);
     } catch (error) {
-      console.log(error);
       return res.status(500).json(`Failed to upload image file: ${error}`);
     }
   }
