@@ -70,7 +70,7 @@ export class UserBookService {
     return bookData;
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     return await this.userBookRepository.findOne(id);
   }
   async findByOption(opt: {}) {
@@ -126,7 +126,7 @@ export class UserBookService {
     return await this.userBookRepository.find();
   }
 
-  async findBookByUserId(userId: number) {
+  async findBookByUserId(userId: string) {
     const listUserBook = await this.findAll();
     const ownerBook = listUserBook.filter((item) => item.ownerId == userId);
     return ownerBook;

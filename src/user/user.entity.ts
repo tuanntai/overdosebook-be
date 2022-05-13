@@ -1,10 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from '../core/entities/base.entity';
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column('text')
   username: string;
 
@@ -32,6 +29,6 @@ export class User {
   @Column('boolean')
   isVerify: boolean;
 
-  @Column({ nullable: true, type: 'float', default: 0.0 })
+  @Column({ nullable: true, type: 'decimal', default: 0.0 })
   balance: number;
 }

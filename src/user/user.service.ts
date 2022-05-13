@@ -34,8 +34,8 @@ export class UserService {
   async findAll() {
     return await this.userRepository.find();
   }
-  async findOne(id: number) {
-    return await this.userRepository.findOne(+id);
+  async findOne(id: string) {
+    return await this.userRepository.findOne(id);
   }
 
   async findOneByOption(opts: any = {}) {
@@ -69,7 +69,7 @@ export class UserService {
     return await this.userRepository.delete(id);
   }
 
-  async setVerify(id: number) {
+  async setVerify(id: string) {
     const userData = await this.userRepository.findOne(id);
     const response = await this.update({ ...userData, isVerify: true });
     console.log(response);

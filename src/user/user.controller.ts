@@ -33,13 +33,13 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: string) {
     return await this.userService.findOne(id);
   }
   @UseGuards(JwtAuthGuard)
   @Post('/addFund')
   async addFund(@Body() fund: AddFundDto) {
-    const user = await this.userService.findOne(+fund.userId);
+    const user = await this.userService.findOne(fund.userId);
     const balance = user.balance + Number(fund.balance);
     if (balance < 0) {
       throw new HttpException(

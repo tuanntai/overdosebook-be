@@ -37,13 +37,13 @@ export class UserBookController {
   }
 
   @Get('/getBookByUserId/:userId')
-  findBookByUserId(@Param('userId') userId: number) {
+  findBookByUserId(@Param('userId') userId: string) {
     return this.userBookService.findBookByUserId(userId);
   }
 
   @Get('/:id')
   @Get('/getAll')
-  async getBookById(@Param('id') id: number) {
+  async getBookById(@Param('id') id: string) {
     return this.userBookService.findById(id);
   }
 

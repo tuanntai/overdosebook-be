@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { UserBookModule } from './user-book/user-book.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UserBookModule } from './user-book/user-book.module';
     AuthModule,
     S3Module,
     UserBookModule,
+    CoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,15 +10,15 @@ export enum BookStatus {
 
 export class BuyBookDto {
   @ApiProperty()
-  buyerId: number;
+  buyerId: string;
 
   @ApiProperty()
-  id: number;
+  id: string;
 }
 
 export class CreateUserBookDto {
   @ApiProperty()
-  ownerId: number;
+  ownerId: string;
 
   @ApiProperty()
   title: string;
@@ -38,13 +38,13 @@ export class CreateUserBookDto {
 
 export class UpdateUserBookDto {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
-  ownerId: number;
+  ownerId: string;
 
   @ApiProperty()
-  buyerId: number;
+  buyerId: string;
 
   @ApiProperty()
   title: string;

@@ -3,7 +3,7 @@ export class AddFundDto {
   @ApiProperty()
   readonly balance: number;
   @ApiProperty()
-  readonly userId: number;
+  readonly userId: string;
 }
 
 export class CreateUserDto {
@@ -34,7 +34,7 @@ export class UpdateUserDto {
   readonly avatarUrl: string;
 
   @ApiProperty()
-  readonly id: number;
+  readonly id: string;
 
   @ApiProperty()
   readonly username: string;

@@ -1,19 +1,20 @@
+import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BookStatus } from './interface';
 
 @Entity()
-export class UserBook {
+export class UserBook extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  ownerId: number;
+  ownerId: string;
 
   @Column('text')
   owner: string;
 
   @Column({ nullable: true })
-  buyerId: number;
+  buyerId: string;
 
   @Column('text')
   title: string;
@@ -27,7 +28,7 @@ export class UserBook {
   @Column('text')
   imageUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'decimal', nullable: true })
   price: number;
 
   @Column()
