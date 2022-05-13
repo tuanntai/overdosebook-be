@@ -1,18 +1,18 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { DeliveryService } from './delivery.service';
+import { DeliveryController } from './delivery.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user.entity';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
-import { DeliveryModule } from 'src/delivery/delivery.module';
+import { Delivery } from './delivery.entity';
+import { ReceiptModule } from 'src/receipt/receipt.module';
+import { UserBookModule } from 'src/user-book/user-book.module';
+import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { S3Module } from 'src/s3/s3.module';
-import { UserBookModule } from 'src/user-book/user-book.module';
 import { CoreModule } from 'src/core/core.module';
-import { ReceiptModule } from 'src/receipt/receipt.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Delivery]),
     forwardRef(() => UserModule),
     forwardRef(() => AuthModule),
     forwardRef(() => S3Module),
@@ -21,8 +21,8 @@ import { ReceiptModule } from 'src/receipt/receipt.module';
     forwardRef(() => ReceiptModule),
     forwardRef(() => DeliveryModule),
   ],
-  controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  controllers: [DeliveryController],
+  providers: [DeliveryService],
+  exports: [DeliveryService],
 })
-export class UserModule {}
+export class DeliveryModule {}

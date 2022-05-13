@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ALL } from 'dns';
 import { response } from 'express';
+import { DeliveryState } from 'src/delivery/delivery.entity';
+import { DeliveryService } from 'src/delivery/delivery.service';
+import { ReceiptService } from 'src/receipt/receipt.service';
 import { UserBook } from 'src/user-book/userBook.entity';
 import { UserService } from 'src/user/user.service';
 import { Like, Repository } from 'typeorm';
@@ -19,15 +22,31 @@ export class UserBookService {
   constructor(
     @InjectRepository(UserBook)
     private readonly userBookRepository: Repository<UserBook>,
-    private readonly userServiceRepository: UserService,
+    private readonly userService: UserService,
+    private readonly receiptService: ReceiptService,
   ) {}
+
+  async getBookAnalyze() {
+    const listUserBook = await this.findAll();
+    const listBookAmount = listUserBook.length;
+    const sellingBookAmount = listUserBook.filter(
+      (item) => !item.buyerId,
+    ).length;
+    return {
+      sellingBook: sellingBookAmount,
+      soldBook: listBookAmount - sellingBookAmount,
+      allBook: listBookAmount,
+    };
+  }
+
+  async findAll() {
+    return await this.userBookRepository.find();
+  }
 
   async create(createUserBookDto: CreateUserBookDto) {
     const startTime = new Date();
     const status = BookStatus.SELLING;
-    const owner = await this.userServiceRepository.findOne(
-      createUserBookDto.ownerId,
-    );
+    const owner = await this.userService.findOne(createUserBookDto.ownerId);
     return await this.userBookRepository.save({
       ...createUserBookDto,
       startTime,
@@ -36,7 +55,7 @@ export class UserBookService {
     });
   }
 
-  async update(id: number, UpdateUserBookDto: UpdateUserBookDto) {
+  async update(id: string, UpdateUserBookDto: UpdateUserBookDto) {
     try {
       return await this.userBookRepository.update(id, UpdateUserBookDto);
     } catch {
@@ -48,26 +67,38 @@ export class UserBookService {
 
   async buyBook(payload: BuyBookDto) {
     const bookData = await this.findById(payload.id);
+    const buyer = await this.userService.findOne(payload.buyerId);
+    if (buyer.balance < bookData.price) {
+      throw new BadRequestException('Not enough money');
+    }
     const buyTime = new Date();
-    const owner = await this.userServiceRepository.findOne(bookData.ownerId);
-    await this.userServiceRepository.update({
+    const owner = await this.userService.findOne(bookData.ownerId);
+    await this.userService.update({
       ...owner,
       id: owner.id,
       soldBookAmount: owner.soldBookAmount + 1,
     });
 
     if (owner.soldBookAmount + 1 >= 10) {
-      const response = await this.userServiceRepository.setVerify(owner.id);
-      console.log(response);
+      await this.userService.setVerify(owner.id);
     }
-    await this.userBookRepository.update(payload.id, {
+
+    const soldBook = {
       ...bookData,
       buyTime: buyTime,
       status: BookStatus.SOLD,
       buyerId: payload.buyerId,
-      id: payload.id,
+    };
+    await this.userBookRepository.update(payload.id, soldBook);
+
+    const receipt = await this.receiptService.create({
+      bookId: bookData.id,
+      buyerId: payload.buyerId,
+      price: bookData.price,
+      sellerId: bookData.ownerId,
     });
-    return bookData;
+
+    return { ...soldBook, receipt };
   }
 
   async findById(id: string) {
@@ -75,6 +106,11 @@ export class UserBookService {
   }
   async findByOption(opt: {}) {
     return await this.userBookRepository.find(opt);
+  }
+
+  async updateDeliveryState(id: string, deliveryState: DeliveryState) {
+    const book = await this.userBookRepository.findOne(id);
+    await this.update(book.id, { ...book, deliveryState });
   }
 
   async getAllPaging(options: PaginationParams, searchFields: string[]) {
@@ -120,10 +156,6 @@ export class UserBookService {
       data: items.sort((a, b) => (a.status < b.status ? 1 : -1)),
       limit: size,
     };
-  }
-
-  async findAll() {
-    return await this.userBookRepository.find();
   }
 
   async findBookByUserId(userId: string) {

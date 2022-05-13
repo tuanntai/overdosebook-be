@@ -1,28 +1,28 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { UserBookService } from './user-book.service';
-import { UserBookController } from './user-book.controller';
+import { ReceiptService } from './receipt.service';
+import { ReceiptController } from './receipt.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserBook } from './userBook.entity';
+import { Receipt } from './receipt.entity';
 import { UserModule } from 'src/user/user.module';
-import { ReceiptModule } from 'src/receipt/receipt.module';
 import { DeliveryModule } from 'src/delivery/delivery.module';
 import { CoreModule } from 'src/core/core.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { UserBookModule } from 'src/user-book/user-book.module';
 import { S3Module } from 'src/s3/s3.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserBook]),
+    TypeOrmModule.forFeature([Receipt]),
     forwardRef(() => UserModule),
     forwardRef(() => AuthModule),
-    // forwardRef(() => S3Module),
+    forwardRef(() => S3Module),
     forwardRef(() => UserBookModule),
     forwardRef(() => CoreModule),
     forwardRef(() => ReceiptModule),
     forwardRef(() => DeliveryModule),
   ],
-  providers: [UserBookService],
-  controllers: [UserBookController],
-  exports: [UserBookService],
+  controllers: [ReceiptController],
+  providers: [ReceiptService],
+  exports: [ReceiptService],
 })
-export class UserBookModule {}
+export class ReceiptModule {}

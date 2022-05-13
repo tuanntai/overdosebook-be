@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -22,7 +23,12 @@ export class UserBookController {
     return this.userBookService.create(createSellBook);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Get('/getBookAnalyze')
+  async getBookAnalyze() {
+    return await this.userBookService.getBookAnalyze();
+  }
+
+  // @UseGuards(JwtAuthGuard)
   @Post('/buy')
   buyBook(@Body() payload: BuyBookDto) {
     return this.userBookService.buyBook(payload);
@@ -42,13 +48,12 @@ export class UserBookController {
   }
 
   @Get('/:id')
-  @Get('/getAll')
   async getBookById(@Param('id') id: string) {
     return this.userBookService.findById(id);
   }
 
   @Get('/recentlyBuyBook')
-  recentlyBuyBook() {
-    return this.userBookService.recentlyBuyBook();
+  async recentlyBuyBook() {
+    return await this.userBookService.recentlyBuyBook();
   }
 }

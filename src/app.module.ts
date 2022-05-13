@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { UserBookModule } from './user-book/user-book.module';
 import { CoreModule } from './core/core.module';
+import { ReceiptModule } from './receipt/receipt.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -22,11 +24,13 @@ import { CoreModule } from './core/core.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    UserModule,
-    AuthModule,
-    S3Module,
-    UserBookModule,
-    CoreModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => AuthModule),
+    forwardRef(() => S3Module),
+    forwardRef(() => UserBookModule),
+    forwardRef(() => CoreModule),
+    forwardRef(() => ReceiptModule),
+    forwardRef(() => DeliveryModule),
   ],
   controllers: [AppController],
   providers: [AppService],

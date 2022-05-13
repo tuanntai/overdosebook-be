@@ -36,6 +36,7 @@ export class AuthService {
       id: user.id,
       username: user.username,
     });
+
     return {
       expiresIn: TOKEN_EXPIRES_IN,
       accessToken,

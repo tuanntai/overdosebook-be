@@ -1,4 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
+import { DeliveryState } from 'src/delivery/delivery.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BookStatus } from './interface';
 
@@ -42,5 +43,12 @@ export class UserBook extends BaseEntity {
     enum: BookStatus,
     default: BookStatus.SELLING,
   })
-  status: string;
+  status: BookStatus;
+
+  @Column({
+    type: 'enum',
+    enum: DeliveryState,
+    default: DeliveryState.None,
+  })
+  deliveryState: DeliveryState;
 }

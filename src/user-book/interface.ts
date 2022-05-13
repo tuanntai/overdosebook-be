@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { DeliveryState } from 'src/delivery/delivery.entity';
 
 export enum BookStatus {
   SELLING = 'Selling',
@@ -65,7 +66,10 @@ export class UpdateUserBookDto {
   buyTime: Date;
 
   @ApiProperty()
-  status: string;
+  status: BookStatus;
+
+  @ApiProperty()
+  deliveryState: DeliveryState;
 }
 
 export class PaginationParams {
