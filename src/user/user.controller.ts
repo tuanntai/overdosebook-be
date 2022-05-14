@@ -40,14 +40,11 @@ export class UserController {
   @Post('/addFund')
   async addFund(@Body() fund: AddFundDto) {
     const user = await this.userService.findOne(fund.userId);
-    const balance = user.balance + Number(fund.balance);
+    const balance = Number(user.balance) + Number(fund.balance);
     if (balance < 0) {
-      throw new HttpException(
-        `Not enough coin`,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new HttpException(`Not enough coin`, HttpStatus.BAD_REQUEST);
     }
-    return this.userService.addFund({ balance: balance, userId: fund.userId });
+    return this.userService.addFund({ balance, userId: fund.userId });
   }
 
   @UseGuards(JwtAuthGuard)

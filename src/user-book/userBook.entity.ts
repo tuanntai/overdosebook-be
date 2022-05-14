@@ -31,10 +31,8 @@ export class UserBook extends BaseEntity {
 
   @Column({ type: 'decimal', nullable: true })
   price: number;
-
   @Column()
   startTime: Date;
-
   @Column({ nullable: true })
   buyTime: Date;
 

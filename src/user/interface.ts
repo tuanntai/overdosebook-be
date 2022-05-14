@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { RoleState } from './user.entity';
 export class AddFundDto {
   @ApiProperty()
   readonly balance: number;
@@ -22,7 +23,8 @@ export class CreateUserDto {
   @ApiProperty()
   readonly address: string;
 
-
+  @ApiProperty()
+  readonly role: RoleState;
 
   @ApiProperty()
   readonly avatarUrl: string;
