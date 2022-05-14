@@ -34,5 +34,6 @@ import { DeliveryModule } from './delivery/delivery.module';
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [TypeOrmModule, AppService],
 })
 export class AppModule {}

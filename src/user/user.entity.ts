@@ -17,9 +17,6 @@ export class User extends BaseEntity {
   @Column('text')
   address: string;
 
-  @Column('text')
-  email: string;
-
   @Column()
   soldBookAmount: number;
 

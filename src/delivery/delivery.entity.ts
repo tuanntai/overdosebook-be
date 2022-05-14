@@ -9,8 +9,15 @@ export enum DeliveryState {
 }
 @Entity()
 export class Delivery extends BaseEntity {
-  @Column({ type: 'bigint' })
-  receiptId: string;
   @Column({ type: 'enum', enum: DeliveryState, default: DeliveryState.Waiting })
   state: DeliveryState;
+
+  @Column()
+  address: string;
+
+  @Column()
+  phone: string;
+
+  @Column({ type: 'bigint' })
+  bookId: string;
 }

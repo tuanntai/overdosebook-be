@@ -6,9 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateDeliveryDto, UpdateDeliveryDto } from './delivery.dto';
+import {
+  CreateDeliveryDto,
+  UpdateDeliveryDto,
+  UpdateStateDto,
+} from './delivery.dto';
 import { DeliveryService } from './delivery.service';
 @ApiTags('delivery')
 @Controller('delivery')
@@ -30,12 +35,17 @@ export class DeliveryController {
     return this.deliveryService.findOne(id);
   }
 
-  @Post('updateDelivery/')
-  update(@Body() updateDeliveryDto: UpdateDeliveryDto) {
-    return this.deliveryService.update(
-      updateDeliveryDto.id,
-      updateDeliveryDto.state,
-    );
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateDeliveryDto: UpdateDeliveryDto,
+  ) {
+    return this.deliveryService.update(id, updateDeliveryDto);
+  }
+
+  @Post('/updateDelivery/')
+  updateState(@Body() updateStateDto: UpdateStateDto) {
+    return this.deliveryService.updateState(updateStateDto);
   }
 
   @Delete(':id')

@@ -11,12 +11,12 @@ export class ReceiptService {
   constructor(
     @InjectRepository(Receipt)
     private readonly receiptRepository: Repository<Receipt>,
-    private readonly deliveryService: DeliveryService,
+    // private readonly deliveryService: DeliveryService,
   ) {}
 
   async create(createReceiptDto: CreateReceiptDto) {
     const receipt = await this.receiptRepository.save(createReceiptDto);
-    await this.deliveryService.create({ receiptId: receipt.id });
+    // await this.deliveryService.create({ receiptId: receipt.id });
     return receipt;
   }
 

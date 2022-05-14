@@ -1,15 +1,25 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { DeliveryState } from './delivery.entity';
 export class CreateDeliveryDto {
   @ApiProperty()
-  receiptId: string;
+  bookId: string;
+
+  @ApiProperty()
+  address: string;
+
+  @ApiProperty()
+  phone: string;
 }
 
 export class UpdateDeliveryDto {
   @ApiProperty()
-  id: string;
-  @ApiProperty()
   state: DeliveryState;
+
+  @ApiProperty()
+  address: string;
+
+  @ApiProperty()
+  phone: string;
 }
 
 export class UpdateStateDto {

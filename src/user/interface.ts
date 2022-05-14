@@ -22,8 +22,7 @@ export class CreateUserDto {
   @ApiProperty()
   readonly address: string;
 
-  @ApiProperty()
-  readonly email: string;
+
 
   @ApiProperty()
   readonly avatarUrl: string;
@@ -44,9 +43,6 @@ export class UpdateUserDto {
 
   @ApiProperty()
   readonly balance: number;
-
-  @ApiProperty()
-  readonly email: string;
 
   @ApiProperty()
   readonly phone: string;

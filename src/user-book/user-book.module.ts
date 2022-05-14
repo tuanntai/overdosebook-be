@@ -21,8 +21,8 @@ import { S3Module } from 'src/s3/s3.module';
     forwardRef(() => ReceiptModule),
     forwardRef(() => DeliveryModule),
   ],
-  providers: [UserBookService],
   controllers: [UserBookController],
-  exports: [UserBookService],
+  providers: [UserBookService],
+  exports: [TypeOrmModule, UserBookService],
 })
 export class UserBookModule {}
