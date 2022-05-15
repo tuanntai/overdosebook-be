@@ -1,12 +1,15 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { User } from 'src/user/user.entity';
+import { Column, Entity, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 @Entity()
 export class Receipt extends BaseEntity {
-  @Column({ type: 'bigint' })
-  sellerId: string;
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'seller_id' })
+  seller: User;
 
-  @Column({ type: 'bigint' })
-  buyerId: string;
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'buyer_id' })
+  buyer: User;
 
   @Column({ type: 'bigint' })
   bookId: string;

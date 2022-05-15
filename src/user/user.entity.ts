@@ -1,5 +1,13 @@
-import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../core/entities/base.entity';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
+import { Receipt } from 'src/receipt/receipt.entity';
 
 export enum RoleState {
   Admin = 'Admin',
@@ -41,4 +49,7 @@ export class User extends BaseEntity {
     default: RoleState.User,
   })
   role: RoleState;
+
+  // @OneToMany(() => Receipt, (receipt: Receipt) => receipt.id)
+  // receipt: Receipt[];??? 1 user co nhieu receipt :))
 }

@@ -5,22 +5,36 @@ import { Like, Repository } from 'typeorm';
 import { Receipt } from './receipt.entity';
 import { CreateReceiptDto, UpdateReceiptDto } from './receipt.dto';
 import { DeliveryService } from 'src/delivery/delivery.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ReceiptService {
   constructor(
     @InjectRepository(Receipt)
-    private readonly receiptRepository: Repository<Receipt>, // private readonly deliveryService: DeliveryService,
+    private readonly receiptRepository: Repository<Receipt>,
+    private readonly userService: UserService, // private readonly deliveryService: DeliveryService,
   ) {}
 
   async create(createReceiptDto: CreateReceiptDto) {
-    const receipt = await this.receiptRepository.save(createReceiptDto);
+    const seller = await this.userService.findOne(createReceiptDto.sellerId);
+    const buyer = await this.userService.findOne(createReceiptDto.buyerId);
+    console.log({
+      ...createReceiptDto,
+      seller,
+      buyer,
+    });
+
+    const receipt = await this.receiptRepository.save({
+      ...createReceiptDto,
+      seller,
+      buyer,
+    });
     // await this.deliveryService.create({ receiptId: receipt.id });
     return receipt;
   }
 
   async findAll() {
-    return await this.receiptRepository.find();
+    return await this.receiptRepository.find({ relations: ['seller', 'buyer'] });
   }
 
   async findOne(id: string) {
@@ -29,13 +43,13 @@ export class ReceiptService {
 
   async findReceiptBySellerId(userId: string) {
     const receipts = await this.findAll();
-    const sellerReceipts = receipts.filter((item) => item.sellerId === userId);
+    const sellerReceipts = receipts.filter((item) => item.seller.id === userId);
     return sellerReceipts;
   }
 
   async findReceiptByBuyerId(userId: string) {
     const receipts = await this.findAll();
-    const buyerReceipts = receipts.filter((item) => item.buyerId === userId);
+    const buyerReceipts = receipts.filter((item) => item.buyer.id === userId);
     return buyerReceipts;
   }
 
