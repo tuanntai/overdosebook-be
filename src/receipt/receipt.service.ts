@@ -10,8 +10,7 @@ import { DeliveryService } from 'src/delivery/delivery.service';
 export class ReceiptService {
   constructor(
     @InjectRepository(Receipt)
-    private readonly receiptRepository: Repository<Receipt>,
-    // private readonly deliveryService: DeliveryService,
+    private readonly receiptRepository: Repository<Receipt>, // private readonly deliveryService: DeliveryService,
   ) {}
 
   async create(createReceiptDto: CreateReceiptDto) {
@@ -21,7 +20,7 @@ export class ReceiptService {
   }
 
   async findAll() {
-    return await this.receiptRepository.findAndCount();
+    return await this.receiptRepository.find();
   }
 
   async findOne(id: string) {
@@ -30,15 +29,13 @@ export class ReceiptService {
 
   async findReceiptBySellerId(userId: string) {
     const receipts = await this.findAll();
-    const sellerReceipts = receipts[0].filter(
-      (item) => item.sellerId === userId,
-    );
+    const sellerReceipts = receipts.filter((item) => item.sellerId === userId);
     return sellerReceipts;
   }
 
   async findReceiptByBuyerId(userId: string) {
     const receipts = await this.findAll();
-    const buyerReceipts = receipts[0].filter((item) => item.buyerId === userId);
+    const buyerReceipts = receipts.filter((item) => item.buyerId === userId);
     return buyerReceipts;
   }
 

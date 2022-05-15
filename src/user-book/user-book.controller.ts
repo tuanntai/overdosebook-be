@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Res,
   UseGuards,
@@ -11,7 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserBookService } from 'src/user-book/user-book.service';
-import { BuyBookDto, CreateUserBookDto } from './interface';
+import { BuyBookDto, CreateUserBookDto, UpdateUserBookDto } from './interface';
 
 @ApiTags('book')
 @Controller('user-book')
@@ -42,14 +43,31 @@ export class UserBookController {
     );
   }
 
+  @Get('/getBooksByUserId')
+  async getBooksByUserId(@Query() { search, order, page, size, status, id }) {
+    return this.userBookService.getAllPaging(
+      { search, order, page, size, status },
+      ['title', 'author'],
+    );
+  }
+
   @Get('/getBookByUserId/:userId')
   findBookByUserId(@Param('userId') userId: string) {
+    
     return this.userBookService.findBookByUserId(userId);
   }
 
-  @Get('/:id')
+  @Get(':id')
   async getBookById(@Param('id') id: string) {
     return this.userBookService.findById(id);
+  }
+
+  @Put(':id')
+  async updateBook(
+    @Param('id') id: string,
+    @Body() updateUserBookDto: UpdateUserBookDto,
+  ) {
+    return this.userBookService.update(id, updateUserBookDto);
   }
 
   @Get('/recentlyBuyBook')

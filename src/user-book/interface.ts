@@ -96,6 +96,10 @@ export class PaginationParams {
   @IsNumber()
   @Min(1)
   size?: number;
+
+  @IsOptional()
+  @IsString()
+  id?: string;
 }
 
 export enum EOrder {

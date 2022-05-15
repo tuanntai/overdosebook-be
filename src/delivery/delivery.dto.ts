@@ -5,10 +5,7 @@ export class CreateDeliveryDto {
   bookId: string;
 
   @ApiProperty()
-  address: string;
-
-  @ApiProperty()
-  phone: string;
+  buyerId: string;
 }
 
 export class UpdateDeliveryDto {
@@ -25,8 +22,7 @@ export class UpdateDeliveryDto {
 export class UpdateStateDto {
   @ApiProperty()
   id: string;
-  @ApiProperty()
-  bookId: string;
+
   @ApiProperty()
   state: DeliveryState;
 }

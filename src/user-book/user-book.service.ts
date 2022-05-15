@@ -1,9 +1,6 @@
-import { BadRequestException, Injectable, Res } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ALL } from 'dns';
-import { response } from 'express';
 import { DeliveryState } from 'src/delivery/delivery.entity';
-import { DeliveryService } from 'src/delivery/delivery.service';
 import { ReceiptService } from 'src/receipt/receipt.service';
 import { UserBook } from 'src/user-book/userBook.entity';
 import { UserService } from 'src/user/user.service';
@@ -68,26 +65,38 @@ export class UserBookService {
   async buyBook(payload: BuyBookDto) {
     const bookData = await this.findById(payload.id);
     const buyer = await this.userService.findOne(payload.buyerId);
-    if (buyer.balance < bookData.price) {
-      throw new BadRequestException('Not enough money');
+    const owner = await this.userService.findOne(bookData.ownerId);
+    if (buyer.id === owner.id) {
+      throw new BadRequestException('You can not buy your own.');
+    }
+    console.log(buyer.balance, bookData.price);
+
+    if (Number(buyer.balance) < Number(bookData.price)) {
+      throw new BadRequestException('Not enough money.');
     }
     const buyTime = new Date();
-    const owner = await this.userService.findOne(bookData.ownerId);
+
     await this.userService.update({
       ...owner,
-      id: owner.id,
       soldBookAmount: owner.soldBookAmount + 1,
+      balance: Number(owner.balance) + Number(bookData.price),
+    });
+
+    await this.userService.update({
+      ...buyer,
+      balance: Number(buyer.balance) - Number(bookData.price),
     });
 
     if (owner.soldBookAmount + 1 >= 10) {
       await this.userService.setVerify(owner.id);
     }
 
-    const soldBook = {
+    const soldBook: UserBook = {
       ...bookData,
       buyTime: buyTime,
       status: BookStatus.SOLD,
       buyerId: payload.buyerId,
+      deliveryState: DeliveryState.Waiting,
     };
     await this.userBookRepository.update(payload.id, soldBook);
 
@@ -115,6 +124,7 @@ export class UserBookService {
 
   async getAllPaging(options: PaginationParams, searchFields: string[]) {
     const search = (options.search || '').trim();
+    const ownerId = (options.id || '').trim();
     const page = options.page || 0;
     const order = options.order || EOrder.DESC;
     const size = options.size || 10;
@@ -158,9 +168,15 @@ export class UserBookService {
     };
   }
 
-  async findBookByUserId(userId: string) {
+  async getBooksByUserId(userId: string, query: any) {
     const listUserBook = await this.findAll();
-    const ownerBook = listUserBook.filter((item) => item.ownerId == userId);
+    const ownerBook = listUserBook.filter((item) => item.ownerId === userId);
+    return ownerBook;
+  }
+
+  async findBookByUserId(userId: string) {
+    const listUserBook = await this.userBookRepository.find();
+    const ownerBook = listUserBook.filter((item) => item.ownerId === userId);
     return ownerBook;
   }
 
