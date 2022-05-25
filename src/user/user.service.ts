@@ -43,8 +43,8 @@ export class UserService {
   }
 
   async update(updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
     const data = await this.userRepository.findOne(updateUserDto.id);
+    const updatedAt = new Date();
     const isVerify = updateUserDto.isVerify || data.isVerify;
     const soldBookAmount = updateUserDto.soldBookAmount || data.soldBookAmount;
     const balance = updateUserDto.balance || data.balance;
@@ -53,8 +53,9 @@ export class UserService {
       isVerify,
       soldBookAmount,
       balance,
+      updatedAt,
     });
-    return data;
+    return await this.userRepository.findOne(updateUserDto.id);
   }
 
   async addFund(addFundDto: AddFundDto) {

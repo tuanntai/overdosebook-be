@@ -4,7 +4,7 @@ import { DeliveryState } from 'src/delivery/delivery.entity';
 import { ReceiptService } from 'src/receipt/receipt.service';
 import { UserBook } from 'src/user-book/userBook.entity';
 import { UserService } from 'src/user/user.service';
-import { Like, Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import {
   BookStatus,
   BuyBookDto,
@@ -29,10 +29,16 @@ export class UserBookService {
     const sellingBookAmount = listUserBook.filter(
       (item) => !item.buyerId,
     ).length;
+    const boughtBookAmount = listUserBook.filter((item) => item.buyerId);
+    let totalAmount = 0;
+    for (let i = 0; i < boughtBookAmount.length; i++) {
+      totalAmount += Number(boughtBookAmount[i].price);
+    }
     return {
       sellingBook: sellingBookAmount,
       soldBook: listBookAmount - sellingBookAmount,
       allBook: listBookAmount,
+      totalAmount,
     };
   }
 
@@ -54,7 +60,11 @@ export class UserBookService {
 
   async update(id: string, UpdateUserBookDto: UpdateUserBookDto) {
     try {
-      return await this.userBookRepository.update(id, UpdateUserBookDto);
+      const updatedAt = new Date();
+      return await this.userBookRepository.update(id, {
+        ...UpdateUserBookDto,
+        updatedAt,
+      });
     } catch {
       (e: any) => {
         return e;
@@ -69,28 +79,29 @@ export class UserBookService {
     if (buyer.id === owner.id) {
       throw new BadRequestException('You can not buy your own.');
     }
-    console.log(buyer.balance, bookData.price);
 
     if (Number(buyer.balance) < Number(bookData.price)) {
       throw new BadRequestException('Not enough money.');
     }
     const buyTime = new Date();
+    console.log('a');
 
     await this.userService.update({
       ...owner,
       soldBookAmount: owner.soldBookAmount + 1,
       balance: Number(owner.balance) + Number(bookData.price),
     });
+    console.log('b');
 
     await this.userService.update({
       ...buyer,
       balance: Number(buyer.balance) - Number(bookData.price),
     });
-
+    console.log('c');
     if (owner.soldBookAmount + 1 >= 10) {
       await this.userService.setVerify(owner.id);
     }
-
+    console.log('d');
     const soldBook: UserBook = {
       ...bookData,
       buyTime: buyTime,
@@ -99,15 +110,17 @@ export class UserBookService {
       deliveryState: DeliveryState.Waiting,
     };
     await this.userBookRepository.update(payload.id, soldBook);
-
+    console.log('E');
     const receipt = await this.receiptService.create({
       bookId: bookData.id,
       buyerId: payload.buyerId,
       price: bookData.price,
       sellerId: bookData.ownerId,
     });
+    console.log('f');
+    console.log({ ...soldBook, receiptInfo: receipt });
 
-    return { ...soldBook, receipt };
+    return { ...soldBook, receiptInfo: receipt };
   }
 
   async findById(id: string) {
@@ -128,42 +141,40 @@ export class UserBookService {
     const page = options.page || 0;
     const order = options.order || EOrder.DESC;
     const size = options.size || 10;
-    const status = options.status === undefined ? '' : options.status;
+    const status =
+      options.status === undefined ? BookStatus.ALL : options.status;
     const filter = [];
     for (const field of searchFields) {
       filter.push({ [field]: Like(`%${search}%`) });
     }
 
-    const [items, total] = status
-      ? await this.userBookRepository.findAndCount({
-          where: {
+    filter.push({ status: status });
+
+    const [items, total] = await this.userBookRepository.findAndCount({
+      where: status
+        ? {
+            // author: Like(`%${search}%`),
+            title: ILike(`%${search}%`),
+            ownerId: Like(`%${ownerId}%`),
             status: status,
-            author: Like(`%${search}%`),
-            title: Like(`%${search}%`),
+          }
+        : {
+            // author: Like(`%${search}%`),
+            title: ILike(`%${search}%`),
+            ownerId: Like(`%${ownerId}%`),
           },
-          take: size,
-          skip: page * size,
-          order: {
-            id: order,
-          },
-        })
-      : await this.userBookRepository.findAndCount({
-          where: {
-            author: Like(`%${search}%`),
-            title: Like(`%${search}%`),
-          },
-          take: size,
-          skip: page * size,
-          order: {
-            id: order,
-          },
-        });
+      take: size,
+      skip: page * size,
+      order: {
+        id: order,
+      },
+    });
 
     return {
       totalItems: total,
       totalPages: Math.ceil(total / size),
       currentPage: page,
-      data: items.sort((a, b) => (a.status < b.status ? 1 : -1)),
+      data: items.reverse(),
       limit: size,
     };
   }

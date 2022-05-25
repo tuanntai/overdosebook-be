@@ -19,9 +19,7 @@ export class ReceiptService {
     const seller = await this.userService.findOne(createReceiptDto.sellerId);
     const buyer = await this.userService.findOne(createReceiptDto.buyerId);
     console.log({
-      ...createReceiptDto,
-      seller,
-      buyer,
+      createReceiptDto,
     });
 
     const receipt = await this.receiptRepository.save({
@@ -34,7 +32,9 @@ export class ReceiptService {
   }
 
   async findAll() {
-    return await this.receiptRepository.find({ relations: ['seller', 'buyer'] });
+    return await this.receiptRepository.find({
+      relations: ['seller', 'buyer'],
+    });
   }
 
   async findOne(id: string) {

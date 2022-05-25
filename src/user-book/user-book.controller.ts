@@ -12,7 +12,12 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserBookService } from 'src/user-book/user-book.service';
-import { BuyBookDto, CreateUserBookDto, UpdateUserBookDto } from './interface';
+import {
+  BookStatus,
+  BuyBookDto,
+  CreateUserBookDto,
+  UpdateUserBookDto,
+} from './interface';
 
 @ApiTags('book')
 @Controller('user-book')
@@ -43,6 +48,14 @@ export class UserBookController {
     );
   }
 
+  @Get('/getSelling')
+  async getSelling(@Query() { search, order, page, size }) {
+    return this.userBookService.getAllPaging(
+      { search, order, page, size, status: BookStatus.SELLING },
+      ['title', 'author'],
+    );
+  }
+
   @Get('/getBooksByUserId')
   async getBooksByUserId(@Query() { search, order, page, size, status, id }) {
     return this.userBookService.getAllPaging(
@@ -53,7 +66,6 @@ export class UserBookController {
 
   @Get('/getBookByUserId/:userId')
   findBookByUserId(@Param('userId') userId: string) {
-    
     return this.userBookService.findBookByUserId(userId);
   }
 

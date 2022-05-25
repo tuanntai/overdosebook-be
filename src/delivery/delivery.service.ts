@@ -40,7 +40,8 @@ export class DeliveryService {
 
   async update(id: string, payload: UpdateDeliveryDto) {
     // const receipt = await this.findOne(id);
-    return await this.deliveryRepository.update(id, payload);
+    const updatedAt = new Date();
+    return await this.deliveryRepository.update(id, { ...payload, updatedAt });
   }
 
   async updateState(payload: UpdateStateDto) {

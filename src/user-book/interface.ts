@@ -6,7 +6,7 @@ import { DeliveryState } from 'src/delivery/delivery.entity';
 export enum BookStatus {
   SELLING = 'Selling',
   SOLD = 'SOLD',
-  ALL = 'ALL',
+  ALL = '',
 }
 
 export class BuyBookDto {
