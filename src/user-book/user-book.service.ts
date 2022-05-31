@@ -34,11 +34,53 @@ export class UserBookService {
     for (let i = 0; i < boughtBookAmount.length; i++) {
       totalAmount += Number(boughtBookAmount[i].price);
     }
+
+    const createDays = Array.from(
+      new Set(
+        listUserBook.map((item) => item.createdAt.toISOString().slice(0, 10)),
+      ),
+    ).slice(0, 7);
+
+    const buyDays = Array.from(
+      new Set(
+        listUserBook
+          .map(
+            (item) => item.buyTime && item.buyTime.toISOString().slice(0, 10),
+          )
+          .filter((item) => item !== null),
+      ),
+    ).slice(0, 7);
+
+    let bookCreateByDay = [];
+
+    for (let i = 0; i < createDays.length; i++) {
+      let book = listUserBook
+        .map((item) => item.createdAt.toISOString().slice(0, 10))
+        .filter((item) => item === createDays[i]);
+      bookCreateByDay.push({
+        name: createDays[i],
+        createdBook: book.length,
+      });
+    }
+
+    for (let i = 0; i < buyDays.length; i++) {
+      let book = listUserBook.filter(
+        (item) =>
+          item.buyTime &&
+          item.buyTime.toISOString().slice(0, 10) === buyDays[i],
+      );
+      const dayInArray = bookCreateByDay.find(
+        (item) => item.name === buyDays[i],
+      );
+      dayInArray.soldBook = book.length;
+    }
+
     return {
       sellingBook: sellingBookAmount,
       soldBook: listBookAmount - sellingBookAmount,
       allBook: listBookAmount,
       totalAmount,
+      bookCreateByDay,
     };
   }
 
